@@ -1,0 +1,145 @@
+{
+    "title": "Opulência",
+    "@title": {
+      "description": "App title"
+    },
+
+    "login": "Conecte-se",
+    "@login": {
+      "description": "Login text"
+    },
+
+    "phoneNumber": "Número de telefone",
+    "@phoneNumber": {
+      "description": "Phone Number text"
+    },
+    "sendOtp": "Enviar OTP",
+    "@sendOtp": {
+      "description": "Send OTP text"
+    },
+    "or": "ou",
+    "@or": {
+      "description": "or text"
+    },
+    "next": "Próxima",
+    "@next": {
+      "description": "Próxima text"
+    },
+    "codeSent": "Enviamos um código de 4 dígitos para",
+    "@codeSent": {
+      "description": "codeSent text"
+    },
+    "verificationCode": "Código de verificação",
+    "@verificationCode": {
+      "description": "verificationCode text"
+    },
+    "codeNotRecieved": "Não recebeu o código?",
+    "@codeNotRecieved": {
+      "description": "codeNotRecieved text"
+    },
+    
+  "resend": "Reenviar",
+  "@resend": {
+    "description": "resend text"
+  },
+  
+  "wishlist": "Lista de Desejos",
+  "@wishlist": {
+    "description": "wishlist text"
+  },
+  
+  "orders": "Pedidos",
+  "@orders": {
+    "description": "orders text"
+  },
+  "profileInfo": "Informações do meu perfil",
+  "@profileInfo": {
+    "description": "profileInfo text"
+  },
+  "favorites": "Favoritos",
+  "@favorites": {
+    "description": "favorites text"
+  }
+  ,
+  "tellFriend": "Conte para seu amigo",
+  "@tellFriend": {
+    "description": "tellFriend text"
+  }
+  ,
+  "settings": "Configurações",
+  "@settings": {
+    "description": "settings text"
+  }
+  ,
+  "logout": "Sair",
+  "@logout": {
+    "description": "logout text"
+  }
+  ,
+  "home": "Lar",
+  "@home": {
+    "description": "home text"
+  }
+  ,
+  "explore": "Explorar",
+  "@explore": {
+    "description": "explore text"
+  }
+  ,
+  "profile": "Perfil",
+  "@profile": {
+    "description": "profile text"
+  }
+  ,
+  "trendingFrames": "Quadros de tendências",
+  "@trendingFrames": {
+    "description": "trendingFrames text"
+  }
+  ,
+  "exploreByCategory": "Explorar por categoria",
+  "@exploreByCategory": {
+    "description": "exploreByCategory text"
+  },
+  
+  "newInMarket": "Novidade no mercado",
+  "@newInMarket": {
+    "description": "newInMarket text"
+  },
+  
+  "myAddresses": "Meus endereços",
+  "@myAddresses": {
+    "description": "myAddresses text"
+  }
+  ,
+  "frameColor": "Cor da moldura",
+  "@frameColor": {
+    "description": "frameColor text"
+  }
+  ,
+  "size": "Tamanho",
+  "@size": {
+    "description": "size text"
+  }
+  ,
+  "description": "Descrição",
+  "@description": {
+    "description": "description text"
+  }
+  ,
+  "addToCart": "Adicionar ao carrinho",
+  "@addToCart": {
+    "description" : "addToCart text"
+  }
+  ,
+  "orderNow": "Peça agora",
+  "@orderNow": {
+    "description" : "orderNow text"
+  }
+  ,
+  "customOrder": "Pedido personalizado",
+  "@customOrder": {
+    "description" : "Custom Order"
+  }
+
+
+}

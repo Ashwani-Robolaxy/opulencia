@@ -1,0 +1,145 @@
+
+
+
+{
+  "title": "Opulencia",
+  "@title": {
+    "description": "App title"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login text"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Phone Number text"
+  },
+  "sendOtp": "Send OTP",
+  "@sendOtp": {
+    "description": "Send OTP text"
+  },
+  "or": "or",
+  "@or": {
+    "description": "or text"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "next text"
+  },
+  "codeSent": "We have sent a 4-digit code to",
+  "@codeSent": {
+    "description": "codeSent text"
+  },
+  "verificationCode": "Verification Code",
+  "@verificationCode": {
+    "description": "verificationCode text"
+  },
+  "codeNotRecieved": "Didn’t receive the code?",
+  "@codeNotRecieved": {
+    "description": "codeNotRecieved text"
+  },
+  "resend": "Resend",
+  "@resend": {
+    "description": "resend text"
+  },
+  
+  "wishlist": "Wishlist",
+  "@wishlist": {
+    "description": "wishlist text"
+  },
+  "orders": "Orders",
+  "@orders": {
+    "description": "orders text"
+  },
+  "profileInfo": "My Profile Information",
+  "@profileInfo": {
+    "description": "profileInfo text"
+  }
+  ,
+  "favorites": "Favorites",
+  "@favorites": {
+    "description": "favorites text"
+  }
+  ,
+  "tellFriend": "Tell Your Friend",
+  "@tellFriend": {
+    "description": "tellFriend text"
+  }
+  ,
+  "settings": "Settings",
+  "@settings": {
+    "description": "settings stext"
+  }
+  ,
+  "logout": "Logout",
+  "@logout": {
+    "description": "logout text"
+  }
+  ,
+  "home": "Home",
+  "@home": {
+    "description": "home text"
+  }
+  ,
+  "explore": "Explore",
+  "@explore": {
+    "description": "explore text"
+  }
+  ,
+  "profile": "Profile",
+  "@profile": {
+    "description": "profile text"
+  }
+  ,
+  "trendingFrames": "Trending Frames",
+  "@trendingFrames": {
+    "description": "trendingFrames text"
+  }
+  ,
+  "exploreByCategory": "Explore by Category",
+  "@exploreByCategory": {
+    "description": "exploreByCategory text"
+  }
+  ,
+  "newInMarket": "New in the market",
+  "@newInMarket": {
+    "description": "newInMarket text"
+  }
+  ,
+  "myAddresses": "My Addresses",
+  "@myAddresses": {
+    "description": "myAddresses text"
+  }
+  ,
+  "frameColor": "Frame Color",
+  "@frameColor": {
+    "description": "frameColor text"
+  }
+  ,
+  "size": "Size",
+  "@size": {
+    "description": "size text"
+  }
+  ,
+  "description": "Description",
+  "@description": {
+    "description": "description text"
+  }
+  ,
+  "addToCart": "Add To Cart",
+  "@addToCart": {
+    "description" : "addToCart text"
+  }
+  ,
+  "orderNow": "Order Now",
+  "@orderNow": {
+    "description" : "orderNow text"
+  },
+  "customOrder": "Custom Order",
+  "@customOrder": {
+    "description" : "Custom Order"
+  }
+
+  
+
+}
