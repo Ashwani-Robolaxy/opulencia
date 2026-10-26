@@ -25,4 +25,8 @@ class Routes {
   static String privacy = "privacy";
   static String refundPolicy = "refund_policy";
   static String termsAndCondition = "terms_and_condition";
+  static String saleProduct = "sale_product";
+  static String aiHome = "ai_home";
+  static String postAi = "post_ai";
+  static String enhancedOrderAddress = "enhanced_order_address";
 }

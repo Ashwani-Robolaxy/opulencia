@@ -90,97 +90,107 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               ),
             ),
             const Gap(10),
-            Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                ),
-                child: MyHeader(
-                  onViewAllPressed: () {
-                    catData.selectedCommonTitle = "Trending Frames";
-                    context.go("/${Routes.bottomNav}/${Routes.myAllProducts}",
-                        extra: homeData.trendingList);
-                  },
-                  text: lang.translate(Strings.trendingFrames),
-                )),
-            GridView.builder(
-              padding: const EdgeInsets.all(15),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: homeData.trendingList!.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, mainAxisSpacing: 5, crossAxisSpacing: 5),
-              itemBuilder: (context, index) {
-                var frames = homeData.trendingList![index];
-                return InkWell(
-                  onTap: () {
-                    context.go(
-                        '/${Routes.bottomNav}/${Routes.commonProductDetail}',
-                        extra: frames);
-                  },
-                  child: Container(
-                    width: 30.w,
-                    decoration: BoxDecoration(
-                      // color: _randomColor().withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(10),
+            homeData.trendingList!.isEmpty
+                ? const SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
                     ),
-                    child: Stack(
-                      alignment: Alignment.bottomLeft,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            imageUrl: frames.images![0].images!,
-                            width: 100.w,
-                            height: 100.h,
-                            fit: BoxFit.contain,
-                            placeholder: (context, url) => Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[100]!,
-                              child: Container(
-                                width: 100.w,
-                                height: 100.h,
-                                color: Colors.white,
-                              ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                          ),
-                        ),
-                        Container(
+                    child: MyHeader(
+                      onViewAllPressed: () {
+                        catData.selectedCommonTitle = "Trending Frames";
+                        context.go(
+                            "/${Routes.bottomNav}/${Routes.myAllProducts}",
+                            extra: homeData.trendingList);
+                      },
+                      text: lang.translate(Strings.trendingFrames),
+                    )),
+            homeData.trendingList!.isEmpty
+                ? const SizedBox()
+                : GridView.builder(
+                    padding: const EdgeInsets.all(15),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: homeData.trendingList!.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 5,
+                            crossAxisSpacing: 5),
+                    itemBuilder: (context, index) {
+                      var frames = homeData.trendingList![index];
+                      return InkWell(
+                        onTap: () {
+                          context.go(
+                              '/${Routes.bottomNav}/${Routes.commonProductDetail}',
+                              extra: frames);
+                        },
+                        child: Container(
+                          width: 30.w,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withOpacity(0.7)
-                                  ])),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            // color: _randomColor().withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Stack(
+                            alignment: Alignment.bottomLeft,
                             children: [
-                              Text(
-                                frames.frame!,
-                                maxLines: 2,
-                                style: Styles.mediumBoldText(context).copyWith(
-                                  color: Colors.white,
-                                  fontSize: 12,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: CachedNetworkImage(
+                                  imageUrl: frames.images![0].images!,
+                                  width: 100.w,
+                                  height: 100.h,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url) =>
+                                      Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    child: Container(
+                                      width: 100.w,
+                                      height: 100.h,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
                               ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.black.withOpacity(0.7)
+                                        ])),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      frames.frame!,
+                                      maxLines: 2,
+                                      style: Styles.mediumBoldText(context)
+                                          .copyWith(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
             const Gap(10),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -227,17 +237,20 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               ),
             ),
             const Gap(10),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: MyHeader(
-                  onViewAllPressed: () {
-                    catData.selectedCommonTitle =
-                        lang.translate(Strings.newInMarket);
-                    context.go("/${Routes.bottomNav}/${Routes.myAllProducts}",
-                        extra: homeData.newInMarketList);
-                  },
-                  text: lang.translate(Strings.newInMarket),
-                )),
+            homeData.newInMarketList!.isEmpty
+                ? const SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: MyHeader(
+                      onViewAllPressed: () {
+                        catData.selectedCommonTitle =
+                            lang.translate(Strings.newInMarket);
+                        context.go(
+                            "/${Routes.bottomNav}/${Routes.myAllProducts}",
+                            extra: homeData.newInMarketList);
+                      },
+                      text: lang.translate(Strings.newInMarket),
+                    )),
             GridView.builder(
               padding: const EdgeInsets.all(15),
               shrinkWrap: true,

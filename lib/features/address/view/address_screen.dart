@@ -58,23 +58,12 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
                       alignment: Alignment.centerLeft,
                       children: [
                         Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1,
-                                  color: selectedIndex == index
-                                      ? Styles.primary
-                                      : Colors.transparent),
-                              borderRadius: BorderRadius.circular(17)),
+                          decoration: BoxDecoration(border: Border.all(width: 1, color: selectedIndex == index ? Styles.primary : Colors.transparent), borderRadius: BorderRadius.circular(17)),
                           child: Container(
                             width: 100.w,
                             decoration: BoxDecoration(
-                                gradient: LinearGradient(colors: [
-                                  Colors.transparent,
-                                  Styles.orangeColor
-                                ]),
-                                border: BorderDirectional(
-                                    start: BorderSide(
-                                        width: 50, color: Styles.primary)),
+                                gradient: LinearGradient(colors: [Colors.transparent, Styles.orangeColor]),
+                                border: BorderDirectional(start: BorderSide(width: 50, color: Styles.primary)),
                                 color: _randomColor().withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(15)),
                             child: Row(
@@ -83,8 +72,7 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         address.title!,
@@ -160,8 +148,7 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
               ),
               Text(
                 'Add Address',
-                style: Styles.mediumBoldText(context)
-                    .copyWith(color: Styles.primary),
+                style: Styles.mediumBoldText(context).copyWith(color: Styles.primary),
               ),
             ],
           ),

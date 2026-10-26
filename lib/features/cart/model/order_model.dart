@@ -28,8 +28,14 @@ class OrderModel extends HiveObject {
   @HiveField(7)
   String selectedSize;
 
-  @HiveField(8)  // New field index for image
+  @HiveField(8)
   String image;
+
+  @HiveField(9)  // New field index for discountApplicable
+  String discountApplicable;
+
+  @HiveField(10)  // New field index for discountPercentage
+  String discountPercentage;
 
   OrderModel({
     required this.frameId,
@@ -40,6 +46,8 @@ class OrderModel extends HiveObject {
     required this.price,
     required this.isBordered,
     required this.selectedSize,
-    required this.image,  // Add this line
+    required this.image,
+    required this.discountApplicable,  // Add this line
+    required this.discountPercentage,  // Add this line
   });
 }

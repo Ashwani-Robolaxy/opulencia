@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:opulencia/features/cart/model/make_order_model.dart';
 import 'package:opulencia/features/cart/model/order_model.dart';
 import 'package:opulencia/features/cart/repo/cart_repo.dart';
+import 'package:opulencia/features/cart/view/order_webview_screen.dart';
 import 'package:opulencia/features/orders/controller/order_controller.dart';
 import 'package:opulencia/utils/boxes/boxes.dart';
 import 'package:opulencia/utils/strings/route_strings.dart';
@@ -38,9 +38,19 @@ class CartController {
   num totalAmount() {
     num totalPrice = 0;
     for (var i = 0; i < orderBox.length; i++) {
-      totalPrice = totalPrice +
-          (double.parse(orderBox.getAt(i)!.price) *
-              orderBox.getAt(i)!.quantity);
+      var order = orderBox.getAt(i);
+      if (order != null) {
+        double itemPrice = double.parse(order.price);
+
+        // If discount is applicable, calculate the discounted price
+        if (order.discountApplicable == "yes") {
+          double discount = double.parse(order.discountPercentage) / 100;
+          itemPrice = itemPrice - (itemPrice * discount); // Apply discount
+        }
+
+        // Add the price (discounted or not) to the total
+        totalPrice += itemPrice * order.quantity;
+      }
     }
     return totalPrice;
   }
@@ -55,30 +65,46 @@ class CartController {
 
   // ************** MAKE ORDER **************
   String? selectedAddressId;
-  Future<void> makeOrder({required BuildContext context}) async {
+  Future<void> makeOrder({required BuildContext context, String? nif}) async {
     try {
-      List<Product> productList = orderBox.values
-          .map((order) => Product.fromOrderModel(order))
-          .toList();
+      List<Product> productList = orderBox.values.map((order) => Product.fromOrderModel(order)).toList();
 
-      await cartRepositry
-          .makeOrder(
+      final response = await cartRepositry.makeOrder(
         addressId: selectedAddressId!,
         totalPrice: totalAmount().toString(),
+        nif: nif,
         makeorderDetails: productList,
         context: context,
-      )
-          .then((value) async {
-        clearCart();
-        // ignore: use_build_context_synchronously
-        final orderData = ref.watch(orderControllerProvider);
-        await orderData.getOrderHistory(context: context);
+      );
 
-        // ignore: use_build_context_synchronously
-        context.go('/${Routes.bottomNav}');
-        // Navigator.pop(context, {"refresh": "refreshed"});
-        EasyLoading.dismiss();
-      });
+      if (response != null) {
+        // Check if the response contains a webview_url
+        if (response['webview_url'] != null && response['webview_url'].toString().isNotEmpty) {
+          // Navigate to webview screen with the URL
+          clearCart();
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OrderWebviewScreen(
+                url: response['webview_url'].toString(),
+                title: 'Complete Payment',
+              ),
+            ),
+          );
+        } else {
+          // No webview URL, proceed with normal flow
+          clearCart();
+          // ignore: use_build_context_synchronously
+          final orderData = ref.watch(orderControllerProvider);
+          await orderData.getOrderHistory(context: context);
+
+          // ignore: use_build_context_synchronously
+          context.go('/${Routes.bottomNav}');
+        }
+      }
+
+      EasyLoading.dismiss();
     } catch (e) {
       EasyLoading.dismiss();
     }

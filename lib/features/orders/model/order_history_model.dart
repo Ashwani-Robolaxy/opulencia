@@ -1,4 +1,3 @@
-
 class OrderHistoryModel {
   String? status;
   String? message;
@@ -12,8 +11,7 @@ class OrderHistoryModel {
 
   factory OrderHistoryModel.fromJson(Map<String, dynamic> json) {
     var detailsList = json['details'] as List?;
-    List<OrderDetails>? details =
-        detailsList?.map((i) => OrderDetails.fromJson(i)).toList();
+    List<OrderDetails>? details = detailsList?.map((i) => OrderDetails.fromJson(i)).toList();
 
     return OrderHistoryModel(
       status: json['status'],
@@ -36,10 +34,11 @@ class OrderDetails {
   String? orderNo;
   String? status;
   String? orderTotal;
- 
+
   String? createdAt;
   String? addressId;
   Address? address;
+  String? invoice;
   List<ProductDetails>? products;
 
   OrderDetails({
@@ -47,28 +46,26 @@ class OrderDetails {
     this.orderNo,
     this.status,
     this.orderTotal,
-    
     this.createdAt,
     this.addressId,
     this.address,
     this.products,
+    this.invoice,
   });
 
   factory OrderDetails.fromJson(Map<String, dynamic> json) {
     var productsList = json['products'] as List?;
-    List<ProductDetails>? products =
-        productsList?.map((i) => ProductDetails.fromJson(i)).toList();
+    List<ProductDetails>? products = productsList?.map((i) => ProductDetails.fromJson(i)).toList();
 
     return OrderDetails(
       id: json['id'],
       orderNo: json['order_no'],
       status: json['status'],
       orderTotal: json['order_total'],
-      
       createdAt: json['created_at'],
       addressId: json['address_id'],
-      address:
-          json['address'] != null ? Address.fromJson(json['address']) : null,
+      invoice: json['vendus_invoice_id'],
+      address: json['address'] != null ? Address.fromJson(json['address']) : null,
       products: products,
     );
   }
@@ -79,10 +76,10 @@ class OrderDetails {
       'order_no': orderNo,
       'status': status,
       'order_total': orderTotal,
-      
       'created_at': createdAt,
       'address_id': addressId,
       'address': address?.toJson(),
+      'vendus_invoice_id': invoice,
       'products': products?.map((product) => product.toJson()).toList(),
     };
   }
@@ -132,13 +129,14 @@ class ProductDetails {
   String? id;
   String? frame;
   String? description;
-   String? reviewSubmitted;
+  String? reviewSubmitted;
   String? frameSize;
   String? frameType;
   String? frameColor;
   String? framePrice;
   String? quantity;
   String? totalPrice;
+
   List<ProductImage>? images;
 
   ProductDetails({
@@ -157,8 +155,7 @@ class ProductDetails {
 
   factory ProductDetails.fromJson(Map<String, dynamic> json) {
     var imagesList = json['images'] as List?;
-    List<ProductImage>? images =
-        imagesList?.map((i) => ProductImage.fromJson(i)).toList();
+    List<ProductImage>? images = imagesList?.map((i) => ProductImage.fromJson(i)).toList();
 
     return ProductDetails(
       id: json['id'],

@@ -1,0 +1,6 @@
+flutter_launcher_icons:
+  image_path: "assets/icons/we_print_logo.png"
+
+  android: true # can specify file name here e.g. "ic_launcher"
+  ios: true # can specify file name here e.g. "AppIcon"
+  remove_alpha_ios: true

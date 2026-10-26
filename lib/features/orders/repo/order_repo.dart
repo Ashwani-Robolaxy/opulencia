@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opulencia/features/orders/model/ai_order_model.dart';
 import 'package:opulencia/features/orders/model/custom_order_model.dart';
 import 'package:opulencia/features/orders/model/order_history_model.dart';
 import 'package:opulencia/utils/strings/route_strings.dart';
@@ -18,8 +19,7 @@ class OrderRepo {
   static final Dio _dio = Dio();
 
 // ******************** GET ORDER HISTORY ***************************
-  Future<OrderHistoryModel?> getOrderHistory(
-      {required BuildContext context}) async {
+  Future<OrderHistoryModel?> getOrderHistory({required BuildContext context}) async {
     try {
       String url = '${Strings.baseUrl}/get-order-history';
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -27,13 +27,13 @@ class OrderRepo {
       Map<String, dynamic> header = {
         'auth-token': authToken,
       };
-      final Response response =
-          await _dio.get(url, options: Options(headers: header));
+      final Response response = await _dio.get(url, options: Options(headers: header));
 
       print(response.data);
       if (response.statusCode == 200) {
         if (response.data["status"].toString() == "1") {
           var data = OrderHistoryModel.fromJson(response.data);
+          print(data.details![1].invoice);
           // ignore: use_build_context_synchronously
           return data;
         } else {
@@ -53,8 +53,7 @@ class OrderRepo {
   }
 
 // ******************** GET CUSTOM ORDER HISTORY ***************************
-  Future<CustomOrderModel?> getCustomOrderHistory(
-      {required BuildContext context}) async {
+  Future<CustomOrderModel?> getCustomOrderHistory({required BuildContext context}) async {
     try {
       String url = '${Strings.baseUrl}/get-custom-order-history';
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -62,13 +61,45 @@ class OrderRepo {
       Map<String, dynamic> header = {
         'auth-token': authToken,
       };
-      final Response response =
-          await _dio.get(url, options: Options(headers: header));
+      final Response response = await _dio.get(url, options: Options(headers: header));
 
       print(response.data);
       if (response.statusCode == 200) {
         if (response.data["status"].toString() == "1") {
           var data = CustomOrderModel.fromJson(response.data);
+          // ignore: use_build_context_synchronously
+          return data;
+        } else {
+          return null;
+        }
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+        );
+      }
+    } catch (error) {
+      // ignore: use_build_context_synchronously
+      MyToast.failToast(error.toString(), context);
+      rethrow;
+    }
+  }
+
+// ******************** GET AI ORDER HISTORY ***************************
+  Future<AiOrderModel?> aiOrderHistory({required BuildContext context}) async {
+    try {
+      String url = '${Strings.baseUrl}/get-enhanced-order-history';
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String authToken = prefs.getString('auth_token')!;
+      Map<String, dynamic> header = {
+        'auth-token': authToken,
+      };
+      final Response response = await _dio.get(url, options: Options(headers: header));
+
+      print(response.data);
+      if (response.statusCode == 200) {
+        if (response.data["status"].toString() == "1") {
+          var data = AiOrderModel.fromJson(response.data);
           // ignore: use_build_context_synchronously
           return data;
         } else {
@@ -129,6 +160,71 @@ class OrderRepo {
         );
       }
     } catch (error) {
+      // ignore: use_build_context_synchronously
+      MyToast.failToast(error.toString(), context);
+      rethrow;
+    }
+  }
+
+// ******************** CREATE ENHANCED ORDER ***************************
+  Future<Map<String, dynamic>?> createEnhancedOrder({
+    required String recordId,
+    required String sizeId,
+    required String frameType,
+    required String frameColor,
+    required String addressId,
+    String? nif,
+    required BuildContext context,
+  }) async {
+    try {
+      String url = '${Strings.baseUrl}/create-enhanced-order';
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String authToken = prefs.getString('auth_token')!;
+      Map<String, dynamic> header = {
+        'auth-token': authToken,
+      };
+      print({
+        'record_id': recordId,
+        'size_id': sizeId,
+        'frame_type': frameType,
+        'frame_color': frameColor,
+        'address_id': addressId,
+        'nif': nif,
+      });
+      final formData = FormData.fromMap({
+        'record_id': recordId,
+        'size_id': sizeId,
+        'frame_type': frameType,
+        'frame_color': frameColor,
+        'address_id': addressId,
+        'nif': nif,
+      });
+
+      final Response response = await _dio.post(
+        url,
+        data: formData,
+        options: Options(headers: header),
+      );
+
+      print(response.data);
+      if (response.statusCode == 200) {
+        if (response.data["status"].toString() == "1") {
+          // ignore: use_build_context_synchronously
+          MyToast.successToast(response.data['message'], context);
+          return response.data;
+        } else {
+          // ignore: use_build_context_synchronously
+          MyToast.failToast(response.data['message'], context);
+          return null;
+        }
+      } else {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+        );
+      }
+    } catch (error) {
+      print(error);
       // ignore: use_build_context_synchronously
       MyToast.failToast(error.toString(), context);
       rethrow;

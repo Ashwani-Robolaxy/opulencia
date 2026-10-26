@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:opulencia/features/orders/model/ai_order_model.dart';
 import 'package:opulencia/features/orders/model/custom_order_model.dart';
 import 'package:opulencia/features/orders/model/order_history_model.dart';
 import 'package:opulencia/features/orders/repo/order_repo.dart';
@@ -31,6 +32,7 @@ class OrderController {
       EasyLoading.dismiss();
     }
   }
+
   // ************ GET CUSTOM ORDER HISTORY ***********************
   List<CustomOrderList> customOrderHistoryList = [];
   Future getCustomOrderHistory({required BuildContext context}) async {
@@ -41,6 +43,23 @@ class OrderController {
       )
           .then((value) {
         customOrderHistoryList = value!.details;
+        EasyLoading.dismiss();
+      });
+    } catch (e) {
+      EasyLoading.dismiss();
+    }
+  }
+
+  // ************ GET CUSTOM ORDER HISTORY ***********************
+  List<AiOrderDetail> aiOrderList = [];
+  Future aiOrderHistory({required BuildContext context}) async {
+    try {
+      await orderRepositry
+          .aiOrderHistory(
+        context: context,
+      )
+          .then((value) {
+        aiOrderList = value!.details;
         EasyLoading.dismiss();
       });
     } catch (e) {
@@ -66,11 +85,45 @@ class OrderController {
       )
           .then((value) async {
         await getOrderHistory(context: context);
-        
+
         EasyLoading.dismiss();
       });
     } catch (e) {
       EasyLoading.dismiss();
+    }
+  }
+
+// ************ CREATE ORDER ***********************
+  Future<Map<String, dynamic>?> createEnhancedOrder({
+    required String recordId,
+    required String sizeId,
+    required String frameType,
+    required String frameColor,
+    required String addressId,
+    String? nif,
+    required BuildContext context,
+  }) async {
+    try {
+      EasyLoading.show(status: "Wait...");
+      return await orderRepositry
+          .createEnhancedOrder(
+        addressId: addressId,
+        frameColor: frameColor,
+        frameType: frameType,
+        recordId: recordId,
+        sizeId: sizeId,
+        nif: nif,
+        context: context,
+      )
+          .then((value) async {
+        await getOrderHistory(context: context);
+
+        EasyLoading.dismiss();
+        return value;
+      });
+    } catch (e) {
+      EasyLoading.dismiss();
+      return null;
     }
   }
 }

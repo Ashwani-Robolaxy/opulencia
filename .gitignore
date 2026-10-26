@@ -5,9 +5,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -41,3 +43,37 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+.qodo
+
+# --- Secrets & local artifacts (added before first push) ---
+.env
+.env.*
+!.env.example
+*.p8
+*.p12
+*.pem
+*.jks
+*.keystore
+key.properties
+**/serviceAccountKey.json
+*firebase-adminsdk*.json
+*.mobileprovision
+node_modules/
+/build/
+.dart_tool/
+.firebase/
+.expo/
+**/Pods/
+*.log
+.DS_Store
+.qodo/
+.fvm/flutter_sdk
+venv*/
+*.zip
+*.xlsx
+__MACOSX/
+**/android/app/build/
+**/android/build/
+**/ios/build/
+.gradle/
+.cxx/

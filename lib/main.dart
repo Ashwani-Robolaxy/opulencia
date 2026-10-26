@@ -14,16 +14,17 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
-  Hive.init(appDocumentDir.path);
 
-  //  *********** USER DATA ADAPTERS************
+  // Initialize Hive and Flutter-Hive
+  await Hive.initFlutter();
+
+  // Register your adapter
   Hive.registerAdapter(OrderModelAdapter());
 
-  //  *********** BOXES ************
-
+  // Open Hive boxes
   orderBox = await Hive.openBox<OrderModel>('orderBox');
-  await Hive.initFlutter();
+
+  // Run the application
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -35,38 +36,42 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 final themeProvider = StateProvider<bool>((ref) => false);
-final englishLanguageProvider = StateProvider<bool>((ref) => true);
+final languageProvider =
+    StateProvider<String>((ref) => 'en'); // Changed for more flexibility
 
 class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final isDarkTheme = ref.watch(themeProvider);
-    final isEnglishSelected = ref.watch(englishLanguageProvider);
-    return ResponsiveSizer(builder: (context, orientation, deviceType) {
-      return SafeArea(
-        child: MaterialApp.router(
-          builder: EasyLoading.init(),
-          debugShowCheckedModeBanner: false,
-          routerConfig: myRoutes,
-          title: AppLocalizations.of(context)?.translate(Strings.title) ??
-              'Opulencia',
-          theme: isDarkTheme ? MyThemes.darkTheme : MyThemes.lightThemes,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          locale: isEnglishSelected
-              ? const Locale('en', '')
-              : const Locale('pt', ''),
-          supportedLocales: const [
-            Locale('en', ''),
-            Locale('pt', ''),
-          ],
-        ),
-      );
-    });
+    final selectedLanguage = ref.watch(
+        languageProvider); // Adjusted to handle more languages dynamically
+
+    return ResponsiveSizer(
+      builder: (context, orientation, deviceType) {
+        return SafeArea(
+          child: MaterialApp.router(
+            builder: EasyLoading.init(),
+            debugShowCheckedModeBanner: false,
+            routerConfig: myRoutes,
+            title: AppLocalizations.of(context)?.translate(Strings.title) ??
+                'Opulencia',
+            theme: isDarkTheme ? MyThemes.darkTheme : MyThemes.lightThemes,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            locale: Locale(
+                selectedLanguage), // Dynamically changing locale based on languageProvider
+            supportedLocales: const [
+              Locale('en', ''), // English
+              Locale('pt', ''), // Portuguese
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -214,6 +219,40 @@ MDF--
 
 
 geral.opulencia@gmail.com
+
+1. Select Image to Enhance
+2. Enhance Image
+3. Use Enhanced Image to Print Frame
+ - Details: 
+4. Download Image
+
+Website Part
+
+
+List 3
+List 5
+
+
+Trending Frames Null Handle
+New in the market Frames Null Handle
+
+
+
+Sk TO Me
+358.19
+223.53
+********
+338.39 --SK To ME
+
+Company
+575.12 - ME --- 96
+420 - SK
+470 - SK
+570 - FOOD -- SK
+**********
+1460
+
+243.33 per head
 
 
 */

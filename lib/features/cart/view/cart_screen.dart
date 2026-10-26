@@ -9,6 +9,7 @@ import 'package:opulencia/theme/styles.dart';
 import 'package:opulencia/utils/boxes/boxes.dart';
 import 'package:opulencia/utils/strings/route_strings.dart';
 import 'package:opulencia/utils/strings/strings.dart';
+import 'package:opulencia/utils/utils.dart';
 import 'package:opulencia/utils/widgets/my_appbar.dart';
 import 'package:opulencia/utils/widgets/my_custom_button.dart';
 import 'package:opulencia/utils/widgets/my_empty_message.dart';
@@ -43,14 +44,11 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 },
                 child: Text(
                   'Clear Cart',
-                  style: Styles.mediumBoldText(context)
-                      .copyWith(color: Styles.red),
+                  style: Styles.mediumBoldText(context).copyWith(color: Styles.red),
                 ))
       ]),
       body: orderBox.isEmpty
-          ? const EmptyStateMessage(
-              message: "Found nothing in cart!",
-              animationAsset: "assets/lottie/cart.json")
+          ? const EmptyStateMessage(message: "Found nothing in cart!", animationAsset: "assets/lottie/cart.json")
           : Column(
               children: [
                 ListView.separated(
@@ -88,6 +86,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         ],
                       ),
                       child: CartItemWidget2(
+                        discountApplicable: item.discountApplicable,
+                        discountPercentage: item.discountPercentage,
                         onTapDec: () {
                           if (itemCount == 1) {
                             cartData.removeFromCart(index: index);
@@ -120,10 +120,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       child: Text(
-                        'Total: ${cartData.totalAmount()} ${Strings.currency}',
+                        'Total: ${Utils.currencyConvert(price: (cartData.totalAmount().toDouble()))} ${Strings.currency}',
                         style: Styles.mediumBoldText(context),
                       ),
                     ),
@@ -138,8 +137,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               padding: const EdgeInsets.all(8.0),
               child: MyCustomButton(
                 onPressed: () {
-                  context.go(
-                      "/${Routes.bottomNav}/${Routes.cart}/${Routes.orderaddress}");
+                  context.go("/${Routes.bottomNav}/${Routes.cart}/${Routes.orderaddress}");
                 },
                 label: "Continue",
               ),
@@ -152,6 +150,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 class CartItemWidget2 extends ConsumerStatefulWidget {
   final String title;
   final String price;
+  final String discountApplicable;
+  final String discountPercentage;
   final OrderModel order;
   void Function()? onTapInc;
   void Function()? onTapDec;
@@ -163,6 +163,8 @@ class CartItemWidget2 extends ConsumerStatefulWidget {
     super.key,
     required this.title,
     required this.price,
+    required this.discountApplicable,
+    required this.discountPercentage,
     required this.order,
     required this.onTapInc,
     required this.onTapDec,
@@ -171,8 +173,7 @@ class CartItemWidget2 extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _CartItemWidget2State();
+  ConsumerState<ConsumerStatefulWidget> createState() => _CartItemWidget2State();
 }
 
 class _CartItemWidget2State extends ConsumerState<CartItemWidget2> {
@@ -183,6 +184,7 @@ class _CartItemWidget2State extends ConsumerState<CartItemWidget2> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -194,45 +196,71 @@ class _CartItemWidget2State extends ConsumerState<CartItemWidget2> {
             ),
           ),
           const Gap(10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    widget.order.name,
-                    style: TextStyle(
-                      color: Theme.of(context).canvasColor,
-                      fontSize: 16,
-                      fontFamily: Strings.appFont,
-                      fontWeight: FontWeight.w700,
+          SizedBox(
+            width: 58.w,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        widget.order.name,
+                        maxLines: 10,
+                        style: TextStyle(
+                          color: Theme.of(context).canvasColor,
+                          fontSize: 16,
+                          fontFamily: Strings.appFont,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
-                  ),
-                  Text(
-                    " [${widget.order.selectedSize}]",
-                    style: TextStyle(
-                      color: Theme.of(context).canvasColor,
-                      fontSize: 12,
-                      fontFamily: Strings.appFont,
-                      fontWeight: FontWeight.w400,
+                    Text(
+                      " [${widget.order.selectedSize}]",
+                      style: TextStyle(
+                        color: Theme.of(context).canvasColor,
+                        fontSize: 12,
+                        fontFamily: Strings.appFont,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Text(
-                widget.order.price + Strings.currency,
-                style: TextStyle(
-                  color: const Color(0xFFFF314A),
-                  fontSize: 16,
-                  fontFamily: Strings.appFont,
-                  fontWeight: FontWeight.w700,
+                  ],
                 ),
-              ),
-              Text(
-                "Selected Color: ${widget.order.isBordered ? "Bordered" : "Borderless"} ${widget.order.frameColor}",
-                style: Styles.smallText(context),
-              ),
-            ],
+                widget.order.discountApplicable == "yes"
+                    ? Text(
+                        Utils.currencyConvert(price: (double.parse(widget.order.price) * (double.parse(widget.order.discountPercentage.toString()) / 100))) + Strings.currency,
+                        style: Styles.mediumBoldText(context).copyWith(
+                          color: Styles.greenColor,
+                          fontSize: 16,
+                          fontFamily: Strings.appFont,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    : const SizedBox(),
+                Row(
+                  children: [
+                    Text(
+                      "${Utils.currencyConvert(price: double.parse(widget.order.price))} ${Strings.currency}",
+                      style: Styles.mediumBoldText(context).copyWith(
+                          decoration: widget.order.discountApplicable != "yes" ? TextDecoration.none : TextDecoration.lineThrough,
+                          decorationColor: Theme.of(context).canvasColor.withOpacity(0.8),
+                          color: widget.order.discountApplicable == "yes" ? Theme.of(context).canvasColor.withOpacity(0.3) : Colors.green,
+                          fontSize: widget.order.discountApplicable == "yes" ? 14 : 18),
+                    ),
+                    const Gap(4),
+                    Text(
+                      widget.order.discountApplicable == "yes" ? "${widget.order.discountPercentage.toString()}% OFF" : "",
+                      style: Styles.mediumBoldText(context).copyWith(color: Colors.red, fontSize: 13),
+                    ),
+                  ],
+                ),
+                Text(
+                  "Selected Color: ${widget.order.isBordered ? "Bordered" : "Borderless"} ${widget.order.frameColor}",
+                  style: Styles.smallText(context),
+                ),
+              ],
+            ),
           ),
           const Spacer(),
           // Text(
@@ -243,8 +271,7 @@ class _CartItemWidget2State extends ConsumerState<CartItemWidget2> {
           const Gap(10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5), color: Styles.primary),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Styles.primary),
             child: Row(
               children: [
                 InkWell(
@@ -265,8 +292,7 @@ class _CartItemWidget2State extends ConsumerState<CartItemWidget2> {
                     alignment: Alignment.center,
                     child: Text(
                       widget.order.quantity.toString(),
-                      style: Styles.mediumText(context)
-                          .copyWith(fontSize: 14, color: Colors.white),
+                      style: Styles.mediumText(context).copyWith(fontSize: 14, color: Colors.white),
                     ),
                   ),
                 ),

@@ -53,11 +53,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 const Gap(10),
                 Text(
-                  authData.userData!.firstName == ""
-                      ? "Unnamed"
-                      : authData.userData!.firstName!.toUpperCase(),
-                  style:
-                      Styles.mediumBoldText(context).copyWith(letterSpacing: 4),
+                  authData.userData == null || authData.userData!.firstName == "" ? "Unnamed" : authData.userData!.firstName!.toUpperCase(),
+                  style: Styles.mediumBoldText(context).copyWith(letterSpacing: 4),
                 ),
                 // Text(
                 //   authData.userData!.email == ""
@@ -70,9 +67,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                 InkWell(
                   onTap: () {
-                    FlutterClipboard.copy(
-                            authData.userData!.accountId.toString())
-                        .then((value) => print('copied'));
+                    FlutterClipboard.copy(authData.userData!.accountId.toString()).then((value) => print('copied'));
                     MyToast.successToast("Id Copied", context);
                   },
                   child: Row(
@@ -80,13 +75,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        authData.userData!.accountId == ""
-                            ? ""
-                            : ("ID: ${authData.userData!.accountId!}"),
-                        style: Styles.mediumBoldText(context).copyWith(
-                            fontSize: 12,
-                            color:
-                                Theme.of(context).canvasColor.withOpacity(0.5)),
+                        authData.userData == null || authData.userData!.accountId == "" ? "" : ("ID: ${authData.userData!.accountId!}"),
+                        style: Styles.mediumBoldText(context).copyWith(fontSize: 12, color: Theme.of(context).canvasColor.withOpacity(0.5)),
                       ),
                       const Gap(4),
                       Icon(
@@ -110,16 +100,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         children: [
                           Text(
                             lang.translate(Strings.wishlist).toUpperCase(),
-                            style: Styles.mediumBoldText(context).copyWith(
-                                color: Theme.of(context)
-                                    .canvasColor
-                                    .withOpacity(0.7),
-                                fontSize: 12),
+                            style: Styles.mediumBoldText(context).copyWith(color: Theme.of(context).canvasColor.withOpacity(0.7), fontSize: 12),
                           ),
                           Text(
                             catData.wishList.length.toString(),
-                            style: Styles.mediumBoldText(context)
-                                .copyWith(fontSize: 22),
+                            style: Styles.mediumBoldText(context).copyWith(fontSize: 22),
                           ),
                         ],
                       ),
@@ -139,16 +124,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         children: [
                           Text(
                             lang.translate(Strings.orders).toUpperCase(),
-                            style: Styles.mediumBoldText(context).copyWith(
-                                color: Theme.of(context)
-                                    .canvasColor
-                                    .withOpacity(0.7),
-                                fontSize: 12),
+                            style: Styles.mediumBoldText(context).copyWith(color: Theme.of(context).canvasColor.withOpacity(0.7), fontSize: 12),
                           ),
                           Text(
                             orderData.orderHistoryList.length.toString(),
-                            style: Styles.mediumBoldText(context)
-                                .copyWith(fontSize: 22),
+                            style: Styles.mediumBoldText(context).copyWith(fontSize: 22),
                           ),
                         ],
                       ),
@@ -219,8 +199,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   textColor: Colors.red,
                   fontSize: 16,
                   onTap: () async {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
+                    final SharedPreferences prefs = await SharedPreferences.getInstance();
                     prefs.clear();
                     // ignore: use_build_context_synchronously
                     context.go('/');

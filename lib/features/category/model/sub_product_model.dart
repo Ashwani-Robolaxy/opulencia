@@ -39,6 +39,8 @@ class SubProductDetail {
   final String? description;
   final double? overallRating;
   final String? frame;
+  final String? discountPercentage;
+  final String? discountApplicable;
   final List<Image>? images;
   final List<Review>? reviews;
   final List<RatingSummary>? ratingSummary;
@@ -50,6 +52,8 @@ class SubProductDetail {
     this.description,
     this.overallRating,
     this.frame,
+    this.discountApplicable,
+    this.discountPercentage,
     this.images,
     this.reviews,
     this.ratingSummary,
@@ -73,6 +77,8 @@ class SubProductDetail {
       description: json['description'] as String?,
       overallRating: (json['overall_rating'] as num?)?.toDouble(),
       frame: json['frame'] as String?,
+      discountApplicable: json['discount_applicable'] as String?,
+      discountPercentage: json['discount_percentage'] as String?,
       images: imagesList,
       reviews: reviewsList,
       ratingSummary: ratingSummaryList,

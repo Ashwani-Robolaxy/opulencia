@@ -33,7 +33,7 @@ class HomeRepo {
           data = SubProductModel.fromJson(response.data);
         } else {
           // ignore: use_build_context_synchronously
-          MyToast.infoToast(response.data['message'], context);
+          // MyToast.infoToast(response.data['message'], context);
         }
 
         return data!;
@@ -65,7 +65,7 @@ class HomeRepo {
           await _dio.get(url, options: Options(headers: header));
       SubProductModel? data;
       if (response.statusCode == 200) {
-        print("Trending Data: ${response.data}");
+        print("New in the market: ${response.data}");
         if (response.data["status"].toString() == "1") {
           data = SubProductModel.fromJson(response.data);
         } else {
@@ -106,7 +106,7 @@ class HomeRepo {
           data = SubProductModel.fromJson(response.data);
         } else {
           // ignore: use_build_context_synchronously
-          MyToast.infoToast(response.data['message'], context);
+          // MyToast.infoToast(response.data['message'], context);
         }
 
         return data!;
@@ -177,7 +177,7 @@ class HomeRepo {
           await _dio.get(url, options: Options(headers: header));
       BannerModel? data;
       if (response.statusCode == 200) {
-        print("Trending Data: ${response.data}");
+        print("banner data: ${response.data}");
         if (response.data["status"].toString() == "1") {
           data = BannerModel.fromJson(response.data);
         } else {

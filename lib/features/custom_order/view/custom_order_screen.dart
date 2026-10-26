@@ -41,7 +41,7 @@ class _CustomOrderScreenState extends ConsumerState<CustomOrderScreen> {
   ];
 
   static void _launchCall() async {
-    const url = 'tel:+1234567890'; // Replace with your phone number
+    const url = 'tel:+244927009646'; // Replace with your phone number
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
@@ -50,7 +50,7 @@ class _CustomOrderScreenState extends ConsumerState<CustomOrderScreen> {
   }
 
   static void _launchWhatsApp() async {
-    const phone = '+1234567890'; // Replace with your WhatsApp number
+    const phone = '+244998022587'; // Replace with your WhatsApp number
     const url = 'https://wa.me/$phone';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
@@ -69,7 +69,7 @@ class _CustomOrderScreenState extends ConsumerState<CustomOrderScreen> {
 
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'ashwani@robolaxy.com',
+      path: 'test.weprint@opulencia.co.ao',
       query: encodeQueryParameters(<String, String>{
         'subject': 'Example Subject & Symbols are allowed!',
       }),

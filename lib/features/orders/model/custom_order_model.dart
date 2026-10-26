@@ -11,10 +11,9 @@ class CustomOrderModel {
 
   factory CustomOrderModel.fromJson(Map<String, dynamic> json) {
     return CustomOrderModel(
-      status: json['status'],
+      status: json['status'].toString(),
       message: json['message'],
-      details: List<CustomOrderList>.from(
-          json['details'].map((x) => CustomOrderList.fromJson(x))),
+      details: List<CustomOrderList>.from(json['details'].map((x) => CustomOrderList.fromJson(x))),
     );
   }
 
@@ -52,13 +51,13 @@ class CustomOrderList {
 
   factory CustomOrderList.fromJson(Map<String, dynamic> json) {
     return CustomOrderList(
-      id: json['id'],
+      id: json['id'].toString(),
       orderNo: json['order_no'],
       type: json['type'],
       status: json['status'],
-      orderTotal: json['order_total'],
+      orderTotal: json['order_total'].toString(),
       createdAt: json['created_at'],
-      addressId: json['address_id'],
+      addressId: json['address_id'].toString(),
       address: Address.fromJson(json['address']),
       details: CustomOrderDetail.fromJson(json['details']),
     );
@@ -102,8 +101,8 @@ class Address {
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
-      id: json['id'],
-      userId: json['userId'],
+      id: json['id'].toString(),
+      userId: json['userId'].toString(),
       title: json['title'],
       province: json['province'],
       city: json['city'],
@@ -132,8 +131,8 @@ class CustomOrderDetail {
   String orderId;
   String type;
   String frameImage;
-  String frameType;
-  String frameColor;
+  String? frameType;
+  String? frameColor;
   String frameSize;
   String price;
   String customDetails;
@@ -145,8 +144,8 @@ class CustomOrderDetail {
     required this.orderId,
     required this.type,
     required this.frameImage,
-    required this.frameType,
-    required this.frameColor,
+    this.frameType,
+    this.frameColor,
     required this.frameSize,
     required this.price,
     required this.customDetails,
@@ -156,14 +155,14 @@ class CustomOrderDetail {
 
   factory CustomOrderDetail.fromJson(Map<String, dynamic> json) {
     return CustomOrderDetail(
-      id: json['id'],
-      orderId: json['order_id'],
+      id: json['id'].toString(),
+      orderId: json['order_id'].toString(),
       type: json['type'],
       frameImage: json['frame_image'],
       frameType: json['frame_type'],
       frameColor: json['frame_color'],
       frameSize: json['frame_size'],
-      price: json['price'],
+      price: json['price'].toString(),
       customDetails: json['custom_details'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],

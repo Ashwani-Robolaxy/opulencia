@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opulencia/features/address/controller/address_controller.dart';
 import 'package:opulencia/features/auth/controller/auth_controller.dart';
@@ -10,8 +11,10 @@ import 'package:opulencia/features/orders/controller/order_controller.dart';
 import 'package:opulencia/lang/delegates/localizations_delegate.dart';
 import 'package:opulencia/theme/styles.dart';
 import 'package:opulencia/utils/boxes/boxes.dart';
+import 'package:opulencia/utils/strings/icon_strings.dart';
 import 'package:opulencia/utils/strings/route_strings.dart';
 import 'package:opulencia/utils/strings/strings.dart';
+import 'package:opulencia/utils/widgets/my_custom_button.dart';
 import 'package:opulencia/utils/widgets/my_header.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -173,7 +176,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           highlightColor: Colors.grey[100]!,
                           child: Container(
                             width: 100.w,
-                            height: 18.h,
+                            height: 15.h,
                             color: Colors.white,
                           ),
                         )
@@ -183,39 +186,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               highlightColor: Colors.grey[100]!,
                               child: Container(
                                 width: 100.w,
-                                height: 18.h,
+                                height: 15.h,
                                 color: Colors.white,
                               ),
                             )
                           : CarouselSlider.builder(
                               itemCount: homeData.bannerList!.length,
                               itemBuilder: (context, index, realIndex) {
-                                return Stack(
-                                  alignment: Alignment.centerRight,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            homeData.bannerList![index].banner,
-                                        placeholder: (context, url) =>
-                                            Shimmer.fromColors(
-                                          baseColor: Colors.grey[300]!,
-                                          highlightColor: Colors.grey[100]!,
-                                          child: Container(
-                                            width: 100.w,
-                                            height: 18.h,
-                                            color: Colors.white,
-                                          ),
+                                return InkWell(
+                                  onTap: () {
+                                    catData.selectedSubCatId = homeData
+                                        .bannerList![index].subcategoryId;
+                                    catData
+                                        .getSubCatProducts(context: context)
+                                        .then(
+                                      (value) {
+                                        catData.selectedCommonTitle = homeData
+                                            .bannerList![index].bannerTitle;
+                                        context.go(
+                                            "/${Routes.bottomNav}/${Routes.myAllProducts}",
+                                            extra: catData.allProducList);
+                                      },
+                                    );
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          homeData.bannerList![index].banner,
+                                      placeholder: (context, url) =>
+                                          Shimmer.fromColors(
+                                        baseColor: Colors.grey[300]!,
+                                        highlightColor: Colors.grey[100]!,
+                                        child: Container(
+                                          width: 100.w,
+                                          height: 18.h,
+                                          color: Colors.white,
                                         ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
-                                        fit: BoxFit.cover,
-                                        width: 100.w,
-                                        height: 18.h,
                                       ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                      fit: BoxFit.cover,
+                                      width: 100.w,
+                                      height: 15.h,
                                     ),
-                                  ],
+                                  ),
                                 );
                               },
                               options: CarouselOptions(
@@ -333,17 +348,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       );
                     },
                   ),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: MyHeader(
-                  onViewAllPressed: () {
-                    catData.selectedCommonTitle =
-                        lang.translate(Strings.newInMarket);
-                    context.go("/${Routes.bottomNav}/${Routes.myAllProducts}",
-                        extra: homeData.newInMarketList);
-                  },
-                  text: lang.translate(Strings.newInMarket),
-                )),
+            homeData.newInMarketList!.isEmpty
+                ? const SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: MyHeader(
+                      onViewAllPressed: () {
+                        catData.selectedCommonTitle =
+                            lang.translate(Strings.newInMarket);
+                        context.go(
+                            "/${Routes.bottomNav}/${Routes.myAllProducts}",
+                            extra: homeData.newInMarketList);
+                      },
+                      text: lang.translate(Strings.newInMarket),
+                    )),
             GridView.builder(
               padding: const EdgeInsets.all(15),
               shrinkWrap: true,
@@ -428,6 +446,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
+      floatingActionButton: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(10),
+            backgroundColor: Styles.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onPressed: () {
+            context.go("/${Routes.bottomNav}/${Routes.aiHome}");
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enhance with AI',
+                style: Styles.mediumBoldText(context)
+                    .copyWith(color: Styles.white),
+              ),
+              const Gap(3),
+              Image.asset(
+                IconStrings.ai,
+                height: 25,
+                color: Styles.white,
+              ),
+            ],
+          )),
     );
   }
 }

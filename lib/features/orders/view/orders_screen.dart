@@ -1,8 +1,10 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opulencia/features/invoice/view/invoice_screen.dart';
 import 'package:opulencia/features/orders/controller/order_controller.dart';
 import 'package:opulencia/theme/styles.dart';
 import 'package:opulencia/utils/strings/route_strings.dart';
@@ -43,8 +45,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
         // image: const FlutterLogo(size: 100),
         submitButtonText: 'Submit',
 
-        submitButtonTextStyle:
-            Styles.mediumBoldText(context).copyWith(color: Colors.white),
+        submitButtonTextStyle: Styles.mediumBoldText(context).copyWith(color: Colors.white),
         commentHint: 'Set your custom comment hint',
 
         onCancelled: () => print('cancelled'),
@@ -63,9 +64,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
     return Scaffold(
       body: orderData.orderHistoryList.isEmpty
-          ? const EmptyStateMessage(
-              message: "No Order Found!",
-              animationAsset: "assets/lottie/sad.json")
+          ? const EmptyStateMessage(message: "No Order Found!", animationAsset: "assets/lottie/sad.json")
           : CustomMaterialIndicator(
               backgroundColor: Styles.primary,
               onRefresh: () async {
@@ -94,9 +93,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
                   return InkWell(
                     onTap: () {
-                      context.go(
-                          "/${Routes.bottomNav}/${Routes.orders}/${Routes.orderItems}",
-                          extra: order);
+                      context.go("/${Routes.bottomNav}/${Routes.orders}/${Routes.orderItems}", extra: order);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -157,6 +154,32 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
+                              SizedBox(
+                                height: 20,
+                                child: TextButton(
+                                  style: const ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero), visualDensity: VisualDensity.compact),
+                                  onPressed: () {
+                                    print(order.invoice);
+                                    var invoice = "${Strings.baseUrl}/view-invoice?document_id=${order.invoice}";
+                                    print("My Invoice: $invoice");
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => InvoiceScreen(url: invoice),
+                                        ));
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(CupertinoIcons.doc, size: 14, color: Styles.blue),
+                                      const Gap(3),
+                                      Text(
+                                        "View Invoice",
+                                        style: Styles.smallText(context).copyWith(color: Styles.blue),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                               Row(
                                 children: [
                                   Text(
@@ -166,11 +189,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                                   Text(
                                     order.status!.toUpperCase(),
                                     style: Styles.smallText(context).copyWith(
-                                        color: order.status!.toUpperCase() ==
-                                                "PENDING"
+                                        color: order.status!.toUpperCase() == "PENDING"
                                             ? Styles.red
-                                            : order.status!.toUpperCase() ==
-                                                    "IN-TRANSIT"
+                                            : order.status!.toUpperCase() == "IN-TRANSIT"
                                                 ? Styles.orangeColor
                                                 : Styles.greenColor),
                                   ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:opulencia/features/orders/controller/order_controller.dart';
+import 'package:opulencia/features/orders/view/ai_order_screen.dart';
 import 'package:opulencia/features/orders/view/my_custom_orders_screen.dart';
 import 'package:opulencia/features/orders/view/orders_screen.dart';
 import 'package:opulencia/theme/styles.dart';
@@ -15,11 +17,17 @@ class OrderTabScreen extends ConsumerStatefulWidget {
 class _OrderTabScreenState extends ConsumerState<OrderTabScreen>
     with TickerProviderStateMixin {
   late TabController tabController;
+  fetchOrder() async {
+    final orderData = ref.read(orderControllerProvider);
+    await orderData.aiOrderHistory(context: context);
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
+    fetchOrder();
   }
 
   @override
@@ -53,6 +61,12 @@ class _OrderTabScreenState extends ConsumerState<OrderTabScreen>
                   style: Styles.mediumBoldText(context),
                 ),
               ),
+              Tab(
+                child: Text(
+                  'Enhanced AI',
+                  style: Styles.mediumBoldText(context),
+                ),
+              ),
             ],
           ),
           Expanded(
@@ -61,6 +75,7 @@ class _OrderTabScreenState extends ConsumerState<OrderTabScreen>
               children: const [
                 OrdersScreen(),
                 MyCustomOrderScreen(),
+                AiOrderScreen(),
                 // Center(
                 //     child: EmptyStateMessage(
                 //         message: "No Order Found!",

@@ -15,61 +15,105 @@ final authRepositryProvider = Provider((ref) => AuthRepo());
 class AuthRepo {
   static final Dio _dio = Dio();
 
+// ******************** COMMON DIO ERROR HANDLER ***************************
+  void _handleDioError(DioException dioError, BuildContext context) {
+    final int? statusCode = dioError.response?.statusCode;
+    String message;
+
+    switch (statusCode) {
+      case 400:
+        message = 'Bad request. Please verify your input.';
+        break;
+      case 401:
+        message = 'Unauthorized. Please check your credentials.';
+        break;
+      case 403:
+        message = 'Forbidden. You don’t have permission to perform this action.';
+        break;
+      case 404:
+        message = 'Endpoint not found. Please contact support.';
+        break;
+      case 409:
+        message = 'Conflict detected. Resource already exists.';
+        break;
+      case 422:
+        message = 'Validation failed. Make sure all fields are correct.';
+        break;
+      case 429:
+        message = 'Too many attempts. Please wait and try again later.';
+        break;
+      case 500:
+        message = 'Internal server error. Please try again later.';
+        break;
+      case 502:
+        message = 'Bad gateway. There’s an issue connecting to the server.';
+        break;
+      case 503:
+        message = 'Service unavailable. Please try again later.';
+        break;
+      case 504:
+        message = 'Server timeout. Please check your connection.';
+        break;
+      default:
+        if (statusCode != null) {
+          // Attempt to read a server‐sent error description, or fallback
+          final data = dioError.response?.data;
+          if (data != null && data is Map<String, dynamic> && (data['error'] != null || data['message'] != null)) {
+            message = data['error']?.toString() ?? data['message']!.toString();
+          } else {
+            message = 'Unexpected error (code $statusCode).';
+          }
+        } else {
+          // No status code—likely a network issue or timeout
+          message = 'Network error. Please check your internet connection.';
+        }
+    }
+
+    // Show a single toast for any DioException
+    MyToast.failToast(message, context);
+  }
+
 // ******************** REGISTER ***************************
-  Future<void> register(
-      {required String phone, required BuildContext context}) async {
+  Future<void> register({
+    required String phone,
+    required BuildContext context,
+  }) async {
+    final String registerUrl = '${Strings.baseUrl}/register-phone';
+
     try {
-      String loginUrl = '${Strings.baseUrl}/register-phone';
-      final formData = FormData.fromMap({
-        'phone': phone,
-      });
-      final Response response = await _dio.post(
-        loginUrl,
-        data: formData,
-      );
-      print(response.data);
+      final formData = FormData.fromMap({'phone': phone});
+      final Response response = await _dio.post(registerUrl, data: formData);
+
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
         context.go(
-            '/${Routes.langSelection}/${Routes.authOption}/${Routes.otpVerify}');
-
+          '/${Routes.langSelection}/${Routes.authOption}/${Routes.otpVerify}',
+        );
         // ignore: use_build_context_synchronously
-        MyToast.infoToast(response.data['details'].toString(), context);
+        MyToast.infoToast(
+          response.data['details'].toString(),
+          context,
+        );
       } else {
+        // Treat all non-200 here as DioException so we can handle them below
         throw DioException(
           requestOptions: response.requestOptions,
           response: response,
         );
       }
-    } catch (error) {
-      var logger = Logger(
-        printer: PrettyPrinter(
-            methodCount: 2, // Number of method calls to be displayed
-            errorMethodCount:
-                8, // Number of method calls if stacktrace is provided
-            lineLength: 120, // Width of the output
-            colors: true, // Colorful log messages
-            printEmojis: true, // Print an emoji for each log message
-            printTime: false // Should each log print contain a timestamp
-            ),
-      );
-      var multilineLog = '''
-$error
-''';
-
-      logger.w(multilineLog);
-      print(error);
+    } on DioException catch (dioError) {
+      _handleDioError(dioError, context);
+      rethrow;
+    } catch (e) {
+      // Any other exception (parsing, runtime, etc.)
       // ignore: use_build_context_synchronously
-      MyToast.failToast(error.toString(), context);
+      MyToast.failToast(e.toString(), context);
       rethrow;
     }
   }
 
 // ******************** VERIFICATION ***************************
-  Future<LoginModel> verifyPhone(
-      {required String phone,
-      required String otp,
-      required BuildContext context}) async {
+  Future<LoginModel> verifyPhone({required String phone, required String otp, required BuildContext context}) async {
     try {
       String url = '${Strings.baseUrl}/verify-phone-number';
       final formData = FormData.fromMap({
@@ -86,7 +130,6 @@ $error
       if (response.statusCode == 200) {
         if (response.data["status"].toString() == "1") {
           loginData = LoginModel.fromJson(response.data);
-          
         } else {
           MyToast.failToast(response.data['message'], context);
         }
@@ -98,6 +141,9 @@ $error
           response: response,
         );
       }
+    } on DioException catch (dioError) {
+      _handleDioError(dioError, context);
+      rethrow;
     } catch (error) {
       var logger = Logger();
       logger.w(error);
@@ -116,9 +162,8 @@ $error
       Map<String, dynamic> header = {
         'auth-token': authToken,
       };
-      
-      final Response response =
-          await _dio.get(url, options: Options(headers: header));
+
+      final Response response = await _dio.get(url, options: Options(headers: header));
       UserModel? userData;
       if (response.statusCode == 200) {
         print(response.data);
@@ -138,6 +183,9 @@ $error
           response: response,
         );
       }
+    } on DioException catch (dioError) {
+      _handleDioError(dioError, context);
+      rethrow;
     } catch (error) {
       // ignore: use_build_context_synchronously
       MyToast.failToast(error.toString(), context);
@@ -146,11 +194,7 @@ $error
   }
 
   // ******************** UPDATE PROFILE ***************************
-  Future<void> updateProfile(
-      {required String firstName,
-      required String lastName,
-      required String email,
-      required BuildContext context}) async {
+  Future<void> updateProfile({required String firstName, required String lastName, required String email, required BuildContext context}) async {
     try {
       String url = '${Strings.baseUrl}/user-update-profile';
       final formData = FormData.fromMap({
@@ -164,8 +208,7 @@ $error
         'auth-token': authToken,
       };
       // Obtain shared preferences.
-      final Response response = await _dio.post(url,
-          data: formData, options: Options(headers: header));
+      final Response response = await _dio.post(url, data: formData, options: Options(headers: header));
 
       if (response.statusCode == 200) {
         if (response.data["status"].toString() == "1") {
@@ -181,6 +224,9 @@ $error
           response: response,
         );
       }
+    } on DioException catch (dioError) {
+      _handleDioError(dioError, context);
+      rethrow;
     } catch (error) {
       // ignore: use_build_context_synchronously
       MyToast.failToast(error.toString(), context);

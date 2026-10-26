@@ -192,8 +192,8 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
         selectedTileColor: Styles.primary.withOpacity(0.1),
         onTap: () {
           // Set the selected language
-          ref.read(englishLanguageProvider.notifier).state =
-              locale.languageCode == 'en';
+          // ref.read(languageProvider.notifier).state =
+          //     locale.languageCode == 'en';
           setState(() {
             engSelected = locale.languageCode == 'en';
           });

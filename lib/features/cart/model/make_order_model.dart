@@ -45,11 +45,13 @@ class Product {
 class MakeOrderModel {
   String addressId;
   String totalPrice;
+  String? nif;
   List<Product> products;
 
   MakeOrderModel({
     required this.addressId,
     required this.totalPrice,
+    this.nif,
     required this.products,
   });
 
@@ -59,6 +61,7 @@ class MakeOrderModel {
 
     return MakeOrderModel(
       addressId: json['address_id'],
+      nif: json['nif'],
       totalPrice: json['total_price'],
       products: products,
     );
@@ -68,6 +71,7 @@ class MakeOrderModel {
     return {
       'address_id': addressId,
       'total_price': totalPrice,
+      'nif': nif,
       'products': products.map((product) => product.toJson()).toList(),
     };
   }

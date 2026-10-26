@@ -83,8 +83,8 @@ class _LanguageSelectionScreenState
         selectedTileColor: Styles.primary.withOpacity(0.1),
         onTap: () {
           // Set the selected language
-          ref.read(englishLanguageProvider.notifier).state =
-              locale.languageCode == 'en';
+          // ref.read(englishLanguageProvider.notifier).state =
+          //     locale.languageCode == 'en';
           setState(() {
             // Update the engSelected flag
             engSelected = locale.languageCode == 'en';

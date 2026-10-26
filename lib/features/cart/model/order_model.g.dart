@@ -26,13 +26,15 @@ class OrderModelAdapter extends TypeAdapter<OrderModel> {
       isBordered: fields[6] as bool,
       selectedSize: fields[7] as String,
       image: fields[8] as String,
+      discountApplicable: fields[9] as String,
+      discountPercentage: fields[10] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, OrderModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.frameId)
       ..writeByte(1)
@@ -50,7 +52,11 @@ class OrderModelAdapter extends TypeAdapter<OrderModel> {
       ..writeByte(7)
       ..write(obj.selectedSize)
       ..writeByte(8)
-      ..write(obj.image);
+      ..write(obj.image)
+      ..writeByte(9)
+      ..write(obj.discountApplicable)
+      ..writeByte(10)
+      ..write(obj.discountPercentage);
   }
 
   @override

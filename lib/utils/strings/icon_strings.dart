@@ -1,6 +1,8 @@
 class IconStrings {
   static String dummyDp =
-      "https://images.unsplash.com/photo-1576828831022-ca41d3905fb7?q=80&w=3123&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+      "https://t4.ftcdn.net/jpg/02/44/43/69/360_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg";
+  // static String dummyDp =
+  //     "https://images.unsplash.com/photo-1576828831022-ca41d3905fb7?q=80&w=3123&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
   static String apple = "assets/icons/apple.png";
   static String fb = "assets/icons/facebook.png";
   static String google = "assets/icons/google.png";
@@ -22,4 +24,6 @@ class IconStrings {
   static String appIcon = "assets/icons/we_print_logo.png";
   static String call = "assets/icons/phone-call.png";
   static String sadLottie = "assets/lottie/sad.json";
+  static String ai = "assets/icons/ai.png";
+  static String aiLottie = "assets/lottie/ai.json";
 }

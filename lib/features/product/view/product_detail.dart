@@ -8,6 +8,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:opulencia/features/cart/controller/cart_controller.dart';
 import 'package:opulencia/features/cart/model/order_model.dart';
 import 'package:opulencia/features/category/controller/cat_controller.dart';
@@ -19,6 +20,7 @@ import 'package:opulencia/utils/strings/icon_strings.dart';
 import 'package:opulencia/utils/strings/route_strings.dart';
 import 'package:opulencia/utils/strings/strings.dart';
 import 'package:opulencia/utils/toast/my_toast.dart';
+import 'package:opulencia/utils/utils.dart';
 import 'package:opulencia/utils/widgets/my_appbar.dart';
 import 'package:opulencia/utils/widgets/my_custom_button.dart';
 import 'package:rating_summary/rating_summary.dart';
@@ -60,53 +62,46 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
     //     .frames[catData.selectedFrameIndex!];
     var frameData = catData.isViewAll
         ? catData.allProducList![catData.selectedFrameIndex!]
-        : catData
-            .catList![catData.selectedCatIndex!]
-            .subcategories[catData.selectedSubCatIndex!]
-            .frames[catData.selectedFrameIndex!];
+        : catData.catList![catData.selectedCatIndex!].subcategories[catData.selectedSubCatIndex!].frames[catData.selectedFrameIndex!];
     var lang = AppLocalizations.of(context)!;
-    List<PriceDetails> type1Prices =
-        catData.priceList!.where((price) => price.type == '1').toList();
-    List<PriceDetails> type0Prices =
-        catData.priceList!.where((price) => price.type == '0').toList();
+    List<PriceDetails> type1Prices = catData.priceList!.where((price) => price.type == '1').toList();
+    List<PriceDetails> type0Prices = catData.priceList!.where((price) => price.type == '0').toList();
     var subCat = catData.catList![catData.selectedCatIndex!].subcategories;
     var sub = subCat[catData.selectedSubCatIndex!];
+    print(frameData.ratingSummary![0].count);
+    print(frameData.ratingSummary![1].count);
+    print(frameData.ratingSummary![2].count);
+    print(frameData.ratingSummary![3].count);
+    print(frameData.ratingSummary![4].count);
     return SafeArea(
       top: false,
       child: Scaffold(
           // extendBodyBehindAppBar: true,
-          appBar: myAppBar(
-              context: context,
-              title: "",
-              foregroundColor: Theme.of(context).canvasColor,
-              action: [
-                IconButton(
-                    onPressed: () {
-                      if (catData.wishList.contains(frameData)) {
-                        catData.wishList.remove(frameData);
-                      } else {
-                        catData.wishList.add(frameData);
-                      }
-                      isLiked = !isLiked;
-                      setState(() {});
-                    },
-                    icon: Icon(catData.wishList.contains(frameData)
-                        ? CupertinoIcons.heart_fill
-                        : CupertinoIcons.heart)),
-                IconButton(
-                    onPressed: () {
-                      context.go(
-                          '/${Routes.bottomNav}/${Routes.category}/${Routes.subCategory}/${Routes.allProducts}/${Routes.productDetail}/${Routes.cart}');
-                    },
-                    icon: badges.Badge(
-                      showBadge: orderBox.length > 0 ? true : false,
-                      badgeContent: Text(
-                        orderBox.length.toString(),
-                        style: Styles.smallBoldText(context),
-                      ),
-                      child: const Icon(CupertinoIcons.cart),
-                    ))
-              ]),
+          appBar: myAppBar(context: context, title: "", foregroundColor: Theme.of(context).canvasColor, action: [
+            IconButton(
+                onPressed: () {
+                  if (catData.wishList.contains(frameData)) {
+                    catData.wishList.remove(frameData);
+                  } else {
+                    catData.wishList.add(frameData);
+                  }
+                  isLiked = !isLiked;
+                  setState(() {});
+                },
+                icon: Icon(catData.wishList.contains(frameData) ? CupertinoIcons.heart_fill : CupertinoIcons.heart)),
+            IconButton(
+                onPressed: () {
+                  context.go('/${Routes.bottomNav}/${Routes.category}/${Routes.subCategory}/${Routes.allProducts}/${Routes.productDetail}/${Routes.cart}');
+                },
+                icon: badges.Badge(
+                  showBadge: orderBox.length > 0 ? true : false,
+                  badgeContent: Text(
+                    orderBox.length.toString(),
+                    style: Styles.smallBoldText(context),
+                  ),
+                  child: const Icon(CupertinoIcons.cart),
+                ))
+          ]),
           body: SingleChildScrollView(
             child: Column(
               children: [
@@ -131,11 +126,7 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                     const Gap(7),
                     Container(
                       width: 100.w,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(20)),
+                      decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.4), borderRadius: BorderRadius.circular(20)),
                       child: ClipRRect(
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
@@ -145,31 +136,58 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          frameData.frame!,
-                                          style: Styles.mediumBoldText(context)
-                                              .copyWith(fontSize: 18),
+                                        SizedBox(
+                                          width: 100.w - 30,
+                                          child: Text(
+                                            frameData.frame!,
+                                            maxLines: 2,
+                                            style: Styles.mediumBoldText(context).copyWith(fontSize: 18),
+                                          ),
                                         ),
                                         SizedBox(
                                           width: 100.w - 30,
                                           child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                "${isBorderedSelected ? type1Prices[selectedSizeIndex].endPrice : type0Prices[selectedSizeIndex].endPrice} ${Strings.currency}",
-                                                style: Styles.mediumBoldText(
-                                                        context)
-                                                    .copyWith(
-                                                        color: Colors.green,
-                                                        fontSize: 18),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      frameData.discountApplicable == "yes"
+                                                          ? Text(
+                                                              "${Utils.currencyConvert(price: isBorderedSelected ? (double.parse(type1Prices[selectedSizeIndex].endPrice) * (double.parse(frameData.discountPercentage.toString()) / 100)) : (double.parse(type0Prices[selectedSizeIndex].endPrice) * (double.parse(frameData.discountPercentage.toString()) / 100)))} ${Strings.currency}",
+                                                              style: Styles.mediumBoldText(context).copyWith(color: Colors.green, fontSize: 18),
+                                                            )
+                                                          : const SizedBox(),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "${Utils.currencyConvert(price: isBorderedSelected ? double.parse(type1Prices[selectedSizeIndex].endPrice) : double.parse(type0Prices[selectedSizeIndex].endPrice))} ${Strings.currency}",
+                                                            style: Styles.mediumBoldText(context).copyWith(
+                                                                decoration: frameData.discountApplicable != "yes" ? TextDecoration.none : TextDecoration.lineThrough,
+                                                                decorationColor: Theme.of(context).canvasColor.withOpacity(0.8),
+                                                                color: frameData.discountApplicable == "yes" ? Theme.of(context).canvasColor.withOpacity(0.3) : Colors.green,
+                                                                fontSize: frameData.discountApplicable == "yes" ? 14 : 18),
+                                                          ),
+                                                          const Gap(4),
+                                                          Text(
+                                                            frameData.discountApplicable == "yes" ? "${frameData.discountPercentage.toString()}% OFF" : "",
+                                                            style: Styles.mediumBoldText(context).copyWith(color: Colors.red, fontSize: 13),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const Gap(5),
+                                                ],
                                               ),
                                               Row(
                                                 children: [
@@ -179,90 +197,37 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                                       setState(() {});
                                                     },
                                                     child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 6,
-                                                          vertical: 0),
+                                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
                                                       decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    5),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    5),
+                                                          borderRadius: const BorderRadius.only(
+                                                            topLeft: Radius.circular(5),
+                                                            bottomLeft: Radius.circular(5),
                                                           ),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: isBorderedSelected
-                                                                  ? Styles
-                                                                      .orangeColor
-                                                                  : Theme.of(
-                                                                          context)
-                                                                      .canvasColor
-                                                                      .withOpacity(
-                                                                          0.3))),
+                                                          border: Border.all(width: 1, color: isBorderedSelected ? Styles.orangeColor : Theme.of(context).canvasColor.withOpacity(0.3))),
                                                       child: Text(
                                                         'Bordered',
-                                                        style: Styles.smallText(context).copyWith(
-                                                            color: isBorderedSelected
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .canvasColor
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .canvasColor
-                                                                    .withOpacity(
-                                                                        0.3)),
+                                                        style: Styles.smallText(context)
+                                                            .copyWith(color: isBorderedSelected ? Theme.of(context).canvasColor : Theme.of(context).canvasColor.withOpacity(0.3)),
                                                       ),
                                                     ),
                                                   ),
                                                   InkWell(
                                                     onTap: () {
-                                                      isBorderedSelected =
-                                                          false;
+                                                      isBorderedSelected = false;
                                                       setState(() {});
                                                     },
                                                     child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 6,
-                                                          vertical: 0),
+                                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
                                                       decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    5),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    5),
+                                                          borderRadius: const BorderRadius.only(
+                                                            topRight: Radius.circular(5),
+                                                            bottomRight: Radius.circular(5),
                                                           ),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: isBorderedSelected
-                                                                  ? Theme.of(
-                                                                          context)
-                                                                      .canvasColor
-                                                                      .withOpacity(
-                                                                          0.3)
-                                                                  : Styles
-                                                                      .orangeColor)),
+                                                          border: Border.all(width: 1, color: isBorderedSelected ? Theme.of(context).canvasColor.withOpacity(0.3) : Styles.orangeColor)),
                                                       child: Text(
                                                         'Borderless',
-                                                        style: Styles.smallText(context).copyWith(
-                                                            color: isBorderedSelected
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .canvasColor
-                                                                    .withOpacity(
-                                                                        0.3)
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .canvasColor),
+                                                        style: Styles.smallText(context)
+                                                            .copyWith(color: isBorderedSelected ? Theme.of(context).canvasColor.withOpacity(0.3) : Theme.of(context).canvasColor),
                                                       ),
                                                     ),
                                                   ),
@@ -272,17 +237,14 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                           ),
                                         ),
                                         RatingBar.builder(
-                                          initialRating: 3,
+                                          initialRating: frameData.overallRating!,
                                           minRating: 1,
                                           itemSize: 12,
                                           direction: Axis.horizontal,
                                           allowHalfRating: true,
                                           itemCount: 5,
-                                          itemPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 2.0),
-                                          itemBuilder: (context, _) =>
-                                              const Icon(
+                                          itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                          itemBuilder: (context, _) => const Icon(
                                             Icons.star,
                                             color: Colors.amber,
                                           ),
@@ -297,11 +259,8 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4, vertical: 2),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Styles.primary),
+                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Styles.primary),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -327,10 +286,7 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                             alignment: Alignment.center,
                                             child: Text(
                                               itemQty.toString(),
-                                              style: Styles.mediumText(context)
-                                                  .copyWith(
-                                                      fontSize: 14,
-                                                      color: Colors.white),
+                                              style: Styles.mediumText(context).copyWith(fontSize: 14, color: Colors.white),
                                             ),
                                           ),
                                         ),
@@ -354,14 +310,9 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                 const Gap(10),
                                 Container(
                                   padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .canvasColor
-                                          .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(color: Theme.of(context).canvasColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         lang.translate(Strings.frameColor),
@@ -388,38 +339,18 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                                 decoration: BoxDecoration(
                                                     boxShadow: [
                                                       BoxShadow(
-                                                          spreadRadius:
-                                                              selectedColorIndex ==
-                                                                      index
-                                                                  ? 1
-                                                                  : 0,
-                                                          blurRadius:
-                                                              selectedColorIndex ==
-                                                                      index
-                                                                  ? 6
-                                                                  : 0,
-                                                          color:
-                                                              frameColors[index]
-                                                                  .withOpacity(
-                                                                      0.4))
+                                                          spreadRadius: selectedColorIndex == index ? 1 : 0,
+                                                          blurRadius: selectedColorIndex == index ? 6 : 0,
+                                                          color: frameColors[index].withOpacity(0.4))
                                                     ],
-                                                    border: Border.all(
-                                                        width:
-                                                            selectedColorIndex ==
-                                                                    index
-                                                                ? 2
-                                                                : 0,
-                                                        color: Theme.of(context)
-                                                            .canvasColor),
+                                                    border: Border.all(width: selectedColorIndex == index ? 2 : 0, color: Theme.of(context).canvasColor),
                                                     shape: BoxShape.circle,
                                                     color: frameColors[index]),
-                                                child: selectedColorIndex ==
-                                                        index
+                                                child: selectedColorIndex == index
                                                     ? Icon(
                                                         Icons.check,
                                                         size: 15,
-                                                        color:
-                                                            Styles.orangeColor,
+                                                        color: Styles.orangeColor,
                                                       )
                                                     : const SizedBox(),
                                               ),
@@ -433,14 +364,9 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                 const Gap(10),
                                 Container(
                                   padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .canvasColor
-                                          .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(color: Theme.of(context).canvasColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         lang.translate(Strings.size),
@@ -455,48 +381,30 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                           separatorBuilder: (context, index) {
                                             return const Gap(10);
                                           },
-                                          itemCount: isBorderedSelected
-                                              ? type1Prices.length
-                                              : type0Prices.length,
+                                          itemCount: isBorderedSelected ? type1Prices.length : type0Prices.length,
                                           itemBuilder: (context, index) {
                                             return InkWell(
                                               onTap: () {
-                                                selectedPriceId =
-                                                    isBorderedSelected
-                                                        ? type1Prices[index].id
-                                                        : type0Prices[index].id;
+                                                selectedPriceId = isBorderedSelected ? type1Prices[index].id : type0Prices[index].id;
                                                 selectedSizeIndex = index;
                                                 setState(() {});
                                               },
                                               child: Container(
                                                 alignment: Alignment.center,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10),
+                                                padding: const EdgeInsets.symmetric(horizontal: 10),
                                                 decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
+                                                    borderRadius: BorderRadius.circular(6),
                                                     border: Border.all(
-                                                        width: selectedPriceId ==
-                                                                null
+                                                        width: selectedPriceId == null
                                                             ? 0.2
-                                                            : selectedSizeIndex ==
-                                                                    index
+                                                            : selectedSizeIndex == index
                                                                 ? 2
                                                                 : 0.2,
-                                                        color:
-                                                            Styles.orangeColor),
-                                                    color: Theme.of(context)
-                                                        .scaffoldBackgroundColor),
+                                                        color: Styles.orangeColor),
+                                                    color: Theme.of(context).scaffoldBackgroundColor),
                                                 child: Text(
-                                                  isBorderedSelected
-                                                      ? type1Prices[index].size
-                                                      : type0Prices[index].size,
-                                                  style:
-                                                      Styles.mediumText(context)
-                                                          .copyWith(
-                                                              fontSize: 14),
+                                                  isBorderedSelected ? type1Prices[index].size : type0Prices[index].size,
+                                                  style: Styles.mediumText(context).copyWith(fontSize: 14),
                                                 ),
                                               ),
                                             );
@@ -515,11 +423,7 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                 Text(
                                   frameData.description!,
                                   maxLines: 30,
-                                  style: Styles.mediumText(context).copyWith(
-                                      fontSize: 14,
-                                      color: Theme.of(context)
-                                          .canvasColor
-                                          .withOpacity(1)),
+                                  style: Styles.mediumText(context).copyWith(fontSize: 14, color: Theme.of(context).canvasColor.withOpacity(1)),
                                 ),
                                 const Gap(15),
                                 Align(
@@ -531,56 +435,43 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                 ),
                                 const Gap(5),
                                 Container(
-                                  padding: const EdgeInsets.all(10),
-                                  width: 100.w,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(width: 2)),
-                                  child: RatingSummary(
-                                    // labelStyle:
-                                    //     const TextStyle(color: Colors.black),
-                                    averageStyle: Styles.mediumBoldText(context)
-                                        .copyWith(fontSize: 40),
-                                    labelCounterOneStarsStyle:
-                                        Styles.mediumText(context)
-                                            .copyWith(fontSize: 14),
-                                    labelCounterTwoStarsStyle:
-                                        Styles.mediumText(context)
-                                            .copyWith(fontSize: 14),
-                                    labelCounterThreeStarsStyle:
-                                        Styles.mediumText(context)
-                                            .copyWith(fontSize: 14),
-                                    labelCounterFourStarsStyle:
-                                        Styles.mediumText(context)
-                                            .copyWith(fontSize: 14),
-                                    labelCounterFiveStarsStyle:
-                                        Styles.mediumText(context)
-                                            .copyWith(fontSize: 14),
-                                    counter: frameData.reviews!.length,
-                                    average: frameData.overallRating!
-                                        .round()
-                                        .toDouble(),
-                                    showAverage: true,
-                                    counterFiveStars: int.parse(
-                                        frameData.ratingSummary![4].count!),
-                                    counterFourStars: int.parse(
-                                        frameData.ratingSummary![3].count!),
-                                    counterThreeStars: int.parse(
-                                        frameData.ratingSummary![2].count!),
-                                    counterTwoStars: int.parse(
-                                        frameData.ratingSummary![1].count!),
-                                    counterOneStars: int.parse(
-                                        frameData.ratingSummary![0].count!),
-                                  ),
-                                ),
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(10),
+                                    width: 100.w,
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(width: 2)),
+                                    child: frameData.overallRating == 0
+                                        ? SizedBox(
+                                            height: 100,
+                                            child: Center(
+                                              child: Text(
+                                                'No Rating Found!',
+                                                style: Styles.mediumBoldText(context),
+                                              ),
+                                            ),
+                                          )
+                                        : RatingSummary(
+                                            averageStyle: Styles.mediumBoldText(context).copyWith(fontSize: 40),
+                                            labelCounterOneStarsStyle: Styles.mediumText(context).copyWith(fontSize: 14),
+                                            labelCounterTwoStarsStyle: Styles.mediumText(context).copyWith(fontSize: 14),
+                                            labelCounterThreeStarsStyle: Styles.mediumText(context).copyWith(fontSize: 14),
+                                            labelCounterFourStarsStyle: Styles.mediumText(context).copyWith(fontSize: 14),
+                                            labelCounterFiveStarsStyle: Styles.mediumText(context).copyWith(fontSize: 14),
+                                            counter: frameData.reviews?.length ?? 0, // Total number of reviews
+                                            average: frameData.overallRating != null && frameData.overallRating!.isFinite ? frameData.overallRating!.round().toDouble() : 0.0, // Average rating
+                                            showAverage: true,
+                                            counterFiveStars: int.tryParse(frameData.ratingSummary?[4].count ?? '0') ?? 0,
+                                            counterFourStars: int.tryParse(frameData.ratingSummary?[3].count ?? '0') ?? 0,
+                                            counterThreeStars: int.tryParse(frameData.ratingSummary?[2].count ?? '0') ?? 0,
+                                            counterTwoStars: int.tryParse(frameData.ratingSummary?[1].count ?? '0') ?? 0,
+                                            counterOneStars: int.tryParse(frameData.ratingSummary?[0].count ?? '0') ?? 0,
+                                          )),
                                 const Gap(5),
                                 const Gap(15),
                                 ListView.separated(
                                     separatorBuilder: (context, index) {
                                       return const Gap(20);
                                     },
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
+                                    physics: const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: frameData.reviews!.length,
                                     itemBuilder: (context, index) {
@@ -588,22 +479,12 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                       return Container(
                                         padding: const EdgeInsets.all(15),
                                         decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Theme.of(context)
-                                                .scaffoldBackgroundColor,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  blurRadius: 10,
-                                                  spreadRadius: 2,
-                                                  color: Theme.of(context)
-                                                      .canvasColor
-                                                      .withOpacity(0.1))
-                                            ]),
+                                            borderRadius: BorderRadius.circular(10),
+                                            color: Theme.of(context).scaffoldBackgroundColor,
+                                            boxShadow: [BoxShadow(blurRadius: 10, spreadRadius: 2, color: Theme.of(context).canvasColor.withOpacity(0.1))]),
                                         width: 100.w,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Row(
                                               children: [
@@ -618,30 +499,20 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                                                 const Gap(5),
                                                 Text(
                                                   "${review.firstName} ${review.lastName}",
-                                                  style: Styles.mediumBoldText(
-                                                          context)
-                                                      .copyWith(fontSize: 14),
+                                                  style: Styles.mediumBoldText(context).copyWith(fontSize: 14),
                                                 ),
                                               ],
                                             ),
                                             const Gap(3),
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                myRatings(
-                                                    initialRating: double.parse(
-                                                        review.rating!)),
+                                                myRatings(initialRating: double.parse(review.rating!)),
                                                 Opacity(
                                                   opacity: 0.5,
                                                   child: Text(
-                                                    catData
-                                                        .getFormattedUpdatedAt(
-                                                            review.updatedAt!),
-                                                    style: Styles.smallText(
-                                                            context)
-                                                        .copyWith(
+                                                    catData.getFormattedUpdatedAt(review.updatedAt!),
+                                                    style: Styles.smallText(context).copyWith(
                                                       fontSize: 10,
                                                     ),
                                                   ),
@@ -665,137 +536,102 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Suggested Frames',
-                          style: Styles.mediumBoldText(context).copyWith(
-                              color: Theme.of(context)
-                                  .canvasColor
-                                  .withOpacity(0.6),
-                              fontStyle: FontStyle.italic),
+                          style: Styles.mediumBoldText(context).copyWith(color: Theme.of(context).canvasColor.withOpacity(0.6), fontStyle: FontStyle.italic),
                         ),
                       ),
                     ),
                     SizedBox(
                       height: 140,
-                      child: Row(
-                        children: [
-                          ListView.separated(
-                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                            itemCount: sub.frames.length,
-                            separatorBuilder: (context, index) {
-                              return Gap(2.w);
-                            },
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              var frames = sub.frames[index];
-                              return frameData.id == frames.id
-                                  ? const SizedBox()
-                                  : InkWell(
-                                      onTap: () {
-                                        catData.selectedFrameIndex = index;
-                                        catData.selectedSubCatName =
-                                            sub.subcategory;
-                                        context.go(
-                                          '/${Routes.bottomNav}/${Routes.category}/${Routes.subCategory}/${Routes.productDetail}',
-                                        );
-                                      },
-                                      child: Container(
-                                        width: 30.w,
-                                        decoration: BoxDecoration(
-                                          // color: _randomColor().withOpacity(0.4),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Stack(
-                                          alignment: Alignment.bottomLeft,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: CachedNetworkImage(
-                                                imageUrl:
-                                                    frames.images![0].images!,
+                      child: ListView.separated(
+                        padding: EdgeInsets.symmetric(horizontal: 2.w),
+                        itemCount: sub.frames.length,
+                        separatorBuilder: (context, index) {
+                          return Gap(2.w);
+                        },
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          var frames = sub.frames[index];
+                          return frameData.id == frames.id
+                              ? const SizedBox()
+                              : InkWell(
+                                  onTap: () {
+                                    catData.selectedFrameIndex = index;
+                                    catData.selectedSubCatName = sub.subcategory;
+                                    context.go(
+                                      '/${Routes.bottomNav}/${Routes.category}/${Routes.subCategory}/${Routes.productDetail}',
+                                    );
+                                  },
+                                  child: Container(
+                                    width: 30.w,
+                                    decoration: BoxDecoration(
+                                      // color: _randomColor().withOpacity(0.4),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Stack(
+                                      alignment: Alignment.bottomLeft,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: CachedNetworkImage(
+                                            imageUrl: frames.images![0].images!,
+                                            width: 100.w,
+                                            height: 100.h,
+                                            fit: BoxFit.contain,
+                                            placeholder: (context, url) => Shimmer.fromColors(
+                                              baseColor: Colors.grey[300]!,
+                                              highlightColor: Colors.grey[100]!,
+                                              child: Container(
                                                 width: 100.w,
                                                 height: 100.h,
-                                                fit: BoxFit.contain,
-                                                placeholder: (context, url) =>
-                                                    Shimmer.fromColors(
-                                                  baseColor: Colors.grey[300]!,
-                                                  highlightColor:
-                                                      Colors.grey[100]!,
-                                                  child: Container(
-                                                    width: 100.w,
-                                                    height: 100.h,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        const Icon(Icons.error),
+                                                color: Colors.white,
                                               ),
                                             ),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  gradient: LinearGradient(
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
-                                                      colors: [
-                                                        Colors.transparent,
-                                                        Colors.black
-                                                            .withOpacity(0.7)
-                                                      ])),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 8),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  // Text(
-                                                  //   "\$${frames.prices[0].price}${Strings.currency}",
-                                                  //   maxLines: 1,
-                                                  //   style: Styles.mediumBoldText(context)
-                                                  //       .copyWith(
-                                                  //           color: Colors.yellow,
-                                                  //           fontWeight: FontWeight.w800,
-                                                  //           fontSize: 10,
-                                                  //           height: 0.6),
-                                                  // ),
-                                                  Text(
-                                                    frames.frame!,
-                                                    maxLines: 2,
-                                                    style:
-                                                        Styles.mediumBoldText(
-                                                                context)
-                                                            .copyWith(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
+                                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                                          ),
                                         ),
-                                      ),
-                                    );
-                            },
-                          ),
-                        ],
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.transparent, Colors.black.withOpacity(0.7)])),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              // Text(
+                                              //   "\$${frames.prices[0].price}${Strings.currency}",
+                                              //   maxLines: 1,
+                                              //   style: Styles.mediumBoldText(context)
+                                              //       .copyWith(
+                                              //           color: Colors.yellow,
+                                              //           fontWeight: FontWeight.w800,
+                                              //           fontSize: 10,
+                                              //           height: 0.6),
+                                              // ),
+                                              Text(
+                                                frames.frame!,
+                                                maxLines: 2,
+                                                style: Styles.mediumBoldText(context).copyWith(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                        },
                       ),
                     ),
                     const Gap(100)
@@ -804,8 +640,7 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
               ],
             ),
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           floatingActionButton: ClipRRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 15, sigmaY: 10),
@@ -824,15 +659,13 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                       onPressed: () {
                         if (selectedPriceId != null) {
                           final newOrder = OrderModel(
+                            discountPercentage: frameData.discountPercentage.toString(),
+                            discountApplicable: frameData.discountApplicable.toString(),
                             image: frameData.images![0].images.toString(),
                             isBordered: isBorderedSelected,
                             name: frameData.frame!,
-                            selectedSize: isBorderedSelected
-                                ? type1Prices[selectedSizeIndex].size
-                                : type0Prices[selectedSizeIndex].size,
-                            price: isBorderedSelected
-                                ? type1Prices[selectedSizeIndex].endPrice
-                                : type0Prices[selectedSizeIndex].endPrice,
+                            selectedSize: isBorderedSelected ? type1Prices[selectedSizeIndex].size : type0Prices[selectedSizeIndex].size,
+                            price: isBorderedSelected ? type1Prices[selectedSizeIndex].endPrice : type0Prices[selectedSizeIndex].endPrice,
                             frameId: frameData.id!,
                             priceId: selectedPriceId!,
                             frameColor: selectedColorIndex == 0
@@ -877,7 +710,52 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
                       ),
                       width: 58.w,
                       label: lang.translate(Strings.orderNow),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (selectedPriceId != null) {
+                          final newOrder = OrderModel(
+                            discountPercentage: frameData.discountPercentage.toString(),
+                            discountApplicable: frameData.discountApplicable.toString(),
+                            image: frameData.images![0].images.toString(),
+                            isBordered: isBorderedSelected,
+                            name: frameData.frame!,
+                            selectedSize: isBorderedSelected ? type1Prices[selectedSizeIndex].size : type0Prices[selectedSizeIndex].size,
+                            price: isBorderedSelected ? type1Prices[selectedSizeIndex].endPrice : type0Prices[selectedSizeIndex].endPrice,
+                            frameId: frameData.id!,
+                            priceId: selectedPriceId!,
+                            frameColor: selectedColorIndex == 0
+                                ? "Black"
+                                : selectedColorIndex == 1
+                                    ? "Red"
+                                    : "White",
+                            quantity: itemQty,
+                          );
+
+                          bool itemExists = false;
+
+                          for (var order in orderBox.values) {
+                            if (order.isBordered == newOrder.isBordered &&
+                                order.name == newOrder.name &&
+                                order.selectedSize == newOrder.selectedSize &&
+                                order.price == newOrder.price &&
+                                order.frameId == newOrder.frameId &&
+                                order.priceId == newOrder.priceId &&
+                                order.frameColor == newOrder.frameColor) {
+                              order.quantity += itemQty;
+                              itemExists = true;
+                              break;
+                            }
+                          }
+
+                          if (!itemExists) {
+                            cartData.addToCart(order: newOrder);
+                            context.go("/${Routes.bottomNav}/${Routes.cart}/${Routes.orderaddress}");
+                          }
+
+                          setState(() {});
+                        } else {
+                          MyToast.failToast('Select Size', context);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -887,11 +765,7 @@ class _ProductDetailState extends ConsumerState<ProductDetail> {
     );
   }
 
-  Widget myRatings(
-      {double initialRating = 0.0,
-      Color? unratedColor,
-      bool tapOnlyMode = false,
-      bool ignoreGestures = false}) {
+  Widget myRatings({double initialRating = 0.0, Color? unratedColor, bool tapOnlyMode = false, bool ignoreGestures = false}) {
     return RatingBar.builder(
       initialRating: initialRating,
       minRating: 1,

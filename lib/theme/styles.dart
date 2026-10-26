@@ -8,6 +8,7 @@ class Styles {
   static Color greenColor = Colors.green;
   static Color red = Colors.red;
   static Color blue = Colors.blue;
+  static Color white = Colors.white;
 
   static TextStyle largeText(BuildContext context) {
     return TextStyle(
